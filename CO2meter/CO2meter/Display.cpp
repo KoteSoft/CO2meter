@@ -7,9 +7,13 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "Params.h"
 
 uint8_t displayValue = 123;
 uint8_t displayDigit = 0;
+uint8_t displayMode = PREHEATING;
+uint8_t displayAnim = 0;
+uint32_t displayAnimPre = 0;
 
 uint8_t GetDigit(uint8_t digit)
 {
@@ -29,7 +33,7 @@ uint8_t GetDigit(uint8_t digit)
 	}
 }
 
-uint8_t OutDigit(uint8_t val, uint8_t digit)
+uint8_t OutWorking(uint8_t val, uint8_t digit)
 {	
 	if (digit > 3 || digit < 1)
 	{
@@ -55,6 +59,98 @@ uint8_t OutDigit(uint8_t val, uint8_t digit)
 	return 2;	 
 }
 
+uint8_t OutSettings1(uint8_t val, uint8_t digit)
+{
+	if (digit > 3 || digit < 1)
+	{
+		return 1;
+	}
+	
+	uint8_t B, C;
+	
+	B = (val % 100) / 10;
+	C = val % 10;
+	
+	PORTD = 1 << (digit - 1);
+	PORTB = 0xFF;
+	
+	switch (digit)
+	{
+		case 1: PORTB = 0b11111110; return 0;
+		case 2: PORTB = GetDigit(B); return 0;
+		case 3: PORTB = GetDigit(C); return 0;
+	}
+	
+	return 2;
+}
+
+uint8_t OutSettings2(uint8_t val, uint8_t digit)
+{
+	if (digit > 3 || digit < 1)
+	{
+		return 1;
+	}
+	
+	uint8_t B, C;
+	
+	B = (val % 100) / 10;
+	C = val % 10;
+	
+	PORTD = 1 << (digit - 1);
+	PORTB = 0xFF;
+	
+	switch (digit)
+	{
+		case 1: PORTB = 0b11110111; return 0;
+		case 2: PORTB = GetDigit(B); return 0;
+		case 3: PORTB = GetDigit(C); return 0;
+	}
+	
+	return 2;
+}
+
+uint8_t OutPreheating(uint8_t val, uint8_t digit)
+{
+	if (displayAnimPre > 1000)
+	{
+		displayAnimPre = 0;
+		if (displayAnim<5)
+		{
+			displayAnim++;
+		} 
+		else
+		{
+			displayAnim = 0;
+		}
+	} 
+	else
+	{
+		displayAnimPre++;
+	}
+	
+	if (digit > 3 || digit < 1)
+	{
+		return 1;
+	}
+	
+	uint8_t B, C;
+	
+	B = (val % 100) / 10;
+	C = val % 10;
+	
+	PORTD = 1 << (digit - 1);
+	PORTB = 0xFF;
+	
+	switch (digit)
+	{
+		case 1: PORTB = 0xFF & ~(1 << displayAnim); return 0;
+		case 2: PORTB = GetDigit(B); return 0;
+		case 3: PORTB = GetDigit(C); return 0;
+	}
+	
+	return 2;
+}
+
 void DisplayTimer0Init()
 {
 	TCCR0 = 0<<CS02 | 1<<CS01 | 0<<CS00;
@@ -63,12 +159,18 @@ void DisplayTimer0Init()
 
 ISR(TIMER0_OVF_vect)
 {
-	OutDigit(displayValue, displayDigit);
+	switch(displayMode)
+	{
+		case WORKING: OutWorking(displayValue, displayDigit); break;
+		case PREHEATING: OutPreheating(displayValue, displayDigit); break;
+		case SETTINGS1: OutSettings1(displayValue, displayDigit); break;
+		case SETTINGS2:	OutSettings2(displayValue, displayDigit);		
+	}
 	
 	if (displayDigit<3)
 	{
 		displayDigit++;
-	} 
+	}
 	else
 	{
 		displayDigit = 1;

@@ -9,7 +9,13 @@
 #ifndef PARAMS_H_
 #define PARAMS_H_
 
-
+typedef enum
+{
+	WORKING		=	0,
+	PREHEATING	=	1,
+	SETTINGS1	=	2,
+	SETTINGS2	=	3	
+};
 
 
 
