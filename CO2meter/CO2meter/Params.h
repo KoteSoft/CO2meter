@@ -9,7 +9,7 @@
 #ifndef PARAMS_H_
 #define PARAMS_H_
 
-typedef enum
+enum
 {
 	WORKING		=	0,
 	PREHEATING	=	1,
@@ -17,6 +17,23 @@ typedef enum
 	SETTINGS2	=	3	
 };
 
+typedef enum
+{
+	EMF0,
+	DELTA_EMF,
+	K_AMP,
+	
+	SAVED_PARAMETERS_LIST_SIZE
+}savedParametersEnum;
 
+typedef enum
+{
+	MODE_BUTTON	= 2,
+	SET_BUTTON	= 3,
+}buttons;
+
+extern float savedParametersList[SAVED_PARAMETERS_LIST_SIZE];
+
+void LoadSavedParameters();
 
 #endif /* PARAMS_H_ */

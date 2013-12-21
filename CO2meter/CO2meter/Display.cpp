@@ -111,7 +111,7 @@ uint8_t OutSettings2(uint8_t val, uint8_t digit)
 
 uint8_t OutPreheating(uint8_t val, uint8_t digit)
 {
-	if (displayAnimPre > 1000)
+	if (displayAnimPre > 700)
 	{
 		displayAnimPre = 0;
 		if (displayAnim<5)
@@ -141,11 +141,20 @@ uint8_t OutPreheating(uint8_t val, uint8_t digit)
 	PORTD = 1 << (digit - 1);
 	PORTB = 0xFF;
 	
-	switch (digit)
+	
+	if (val > 0)
 	{
-		case 1: PORTB = 0xFF & ~(1 << displayAnim); return 0;
-		case 2: PORTB = GetDigit(B); return 0;
-		case 3: PORTB = GetDigit(C); return 0;
+		switch (digit)
+			{
+				case 1: PORTB = 0xFF & ~(1 << displayAnim); return 0;
+				case 2: PORTB = GetDigit(B); return 0;
+				case 3: PORTB = GetDigit(C); return 0;
+			}
+		
+	}
+	else if (digit == 1)
+	{
+		PORTB = 0xFF & ~(1 << displayAnim); return 0;
 	}
 	
 	return 2;

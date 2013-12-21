@@ -9,19 +9,25 @@
 #include <avr/io.h>
 #include "Display.h"
 #include <avr/interrupt.h>
+#include "Measurements.h"
+#include "Params.h"
 
 int main(void)
 {
 	DDRB = 0xFF;
-	DDRC = 0xFF;
+	DDRC = 0b11110010;
 	DDRD = 0xFF;
 	
+	LoadSavedParameters();
 	DisplayTimer0Init();
+	ADCInit();
 	
 	sei();
 	
+	Preheating();
+	
     while(1)
     {
-        //TODO:: Please write your application code 
+        Working();
     }
 }
