@@ -78,6 +78,9 @@ void Settings1()
 	{}
 		
 	Settings2();
+	
+	while(bit_is_set(PINC, MODE_BUTTON))
+	{}
 }
 
 void Settings2()

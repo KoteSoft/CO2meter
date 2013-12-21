@@ -46,14 +46,14 @@ uint8_t OutWorking(uint8_t val, uint8_t digit)
 	B = (val % 100) / 10;
 	C = val % 10;
 	
-	PORTD = 1 << (digit - 1);
+	PORTD = 1 << (digit + 1);
 	PORTB = 0xFF;
 	
 	switch (digit)
 	{
-		case 1: PORTB = GetDigit(A) & 127U; return 0;
-		case 2: PORTB = GetDigit(B); return 0;
-		case 3: PORTB = GetDigit(C); return 0;
+		case 1: PORTB = GetDigit(A) & 127U; PORTD |= PORTB & 0b11000000; return 0;
+		case 2: PORTB = GetDigit(B); PORTD |= PORTB & 0b11000000; return 0;
+		case 3: PORTB = GetDigit(C); PORTD |= PORTB & 0b11000000; return 0;
 	}
 	
 	return 2;	 
@@ -71,14 +71,14 @@ uint8_t OutSettings1(uint8_t val, uint8_t digit)
 	B = (val % 100) / 10;
 	C = val % 10;
 	
-	PORTD = 1 << (digit - 1);
+	PORTD = 1 << (digit + 1);
 	PORTB = 0xFF;
 	
 	switch (digit)
 	{
-		case 1: PORTB = 0b11111110; return 0;
-		case 2: PORTB = GetDigit(B); return 0;
-		case 3: PORTB = GetDigit(C); return 0;
+		case 1: PORTB = 0b11111110; PORTD |= PORTB & 0b11000000; return 0;
+		case 2: PORTB = GetDigit(B); PORTD |= PORTB & 0b11000000; return 0;
+		case 3: PORTB = GetDigit(C); PORTD |= PORTB & 0b11000000; return 0;
 	}
 	
 	return 2;
@@ -96,14 +96,14 @@ uint8_t OutSettings2(uint8_t val, uint8_t digit)
 	B = (val % 100) / 10;
 	C = val % 10;
 	
-	PORTD = 1 << (digit - 1);
+	PORTD = 1 << (digit + 1);
 	PORTB = 0xFF;
 	
 	switch (digit)
 	{
-		case 1: PORTB = 0b11110111; return 0;
-		case 2: PORTB = GetDigit(B); return 0;
-		case 3: PORTB = GetDigit(C); return 0;
+		case 1: PORTB = 0b11110111; PORTD |= PORTB & 0b11000000; return 0;
+		case 2: PORTB = GetDigit(B); PORTD |= PORTB & 0b11000000; return 0;
+		case 3: PORTB = GetDigit(C); PORTD |= PORTB & 0b11000000; return 0;
 	}
 	
 	return 2;
@@ -111,7 +111,7 @@ uint8_t OutSettings2(uint8_t val, uint8_t digit)
 
 uint8_t OutPreheating(uint8_t val, uint8_t digit)
 {
-	if (displayAnimPre > 700)
+	if (displayAnimPre > 70)
 	{
 		displayAnimPre = 0;
 		if (displayAnim<5)
@@ -138,31 +138,39 @@ uint8_t OutPreheating(uint8_t val, uint8_t digit)
 	B = (val % 100) / 10;
 	C = val % 10;
 	
-	PORTD = 1 << (digit - 1);
+	PORTD = 1 << (digit + 1);
 	PORTB = 0xFF;
-	
 	
 	if (val > 0)
 	{
 		switch (digit)
 			{
-				case 1: PORTB = 0xFF & ~(1 << displayAnim); return 0;
-				case 2: PORTB = GetDigit(B); return 0;
-				case 3: PORTB = GetDigit(C); return 0;
+				case 1: PORTB = 0xFF & ~(1 << displayAnim); PORTD |= PORTB & 0b11000000; return 0;
+				case 2: PORTB = GetDigit(B); PORTD |= PORTB & 0b11000000; return 0;
+				case 3: PORTB = GetDigit(C); PORTD |= PORTB & 0b11000000; return 0;
 			}
 		
 	}
+	
 	else if (digit == 1)
 	{
-		PORTB = 0xFF & ~(1 << displayAnim); return 0;
+		PORTB = 0xFF & ~(1 << displayAnim); 
+		PORTD |= 0b11000000; 
+		return 0;
 	}
 	
+	else
+	{
+		PORTD |= 0b11000000;
+		return 0;
+	}
+		
 	return 2;
 }
 
 void DisplayTimer0Init()
 {
-	TCCR0 = 0<<CS02 | 1<<CS01 | 0<<CS00;
+	TCCR0 = 0<<CS02 | 1<<CS01 | 1<<CS00;
 	TIMSK = 1<<TOV0;
 }
 
