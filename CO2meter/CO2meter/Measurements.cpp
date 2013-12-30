@@ -33,9 +33,10 @@ void Preheating()
 	displayValue = 0;
 	_delay_ms(3000);
 	
-	while(ADCGetVoltage() / savedParametersList[K_AMP] < savedParametersList[EMF0])
+	while(fabs(ADCGetVoltage() / savedParametersList[K_AMP] - savedParametersList[EMF0]) > 0.02)
 	{
 		displayValue = ((ADCGetVoltage() / savedParametersList[K_AMP]) / savedParametersList[EMF0]) * 100;
+		_delay_ms(500);
 	}
 	
 	displayValue = 0;
@@ -68,11 +69,12 @@ void Working()
 void Settings1()
 {
 	displayMode = SETTINGS1;
+	displayValue = 80;
 	
 	while(bit_is_set(PINC, MODE_BUTTON))
 	{}
 	
-	_delay_ms(20);
+	_delay_ms(500);
 	
 	while(bit_is_clear(PINC, MODE_BUTTON))
 	{}
@@ -86,11 +88,12 @@ void Settings1()
 void Settings2()
 {
 	displayMode = SETTINGS2;
+	displayValue = 0;
 	
 	while(bit_is_set(PINC, MODE_BUTTON))
 	{}
 	
-	_delay_ms(20);
+	_delay_ms(500);
 	
 	while(bit_is_clear(PINC, MODE_BUTTON))
 	{}
