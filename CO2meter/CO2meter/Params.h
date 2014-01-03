@@ -22,6 +22,8 @@ typedef enum
 	EMF0,
 	DELTA_EMF,
 	K_AMP,
+	LOW_LIM,
+	HIGH_LIM,
 	
 	SAVED_PARAMETERS_LIST_SIZE
 }savedParametersEnum;
