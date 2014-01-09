@@ -18,6 +18,6 @@ void LoadSavedParameters()
 	}
 		
 	savedParametersList[EMF0] = 0.3;
-	savedParametersList[DELTA_EMF] = 0.05;
+	savedParametersList[DELTA_EMF] = 0.05;//0,05
 	savedParametersList[K_AMP] = 16.0;
 }

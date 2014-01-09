@@ -34,10 +34,12 @@ void Preheating()
 	displayValue = 0;
 	_delay_ms(3000);
 	
-	while(fabs(ADCGetVoltage() / savedParametersList[K_AMP] - savedParametersList[EMF0]) > 0.03)
+	for(uint16_t i = 0; i < 7200; i++)//прогрев полчаса
 	{
 		displayValue = ((ADCGetVoltage() / savedParametersList[K_AMP]) / savedParametersList[EMF0]) * 100;
 		_delay_ms(500);
+		if (fabs(ADCGetVoltage() / savedParametersList[K_AMP] - savedParametersList[EMF0]) < 0.03)//если прогрелось быстрее
+			break;
 	}
 	
 	displayValue = 0;
@@ -62,14 +64,21 @@ void Working()
 	}
 	
 	
-	if ((measuredValue > savedParametersList[HIGH_LIM]) || (measuredValue < savedParametersList[LOW_LIM]))
+	if ((measuredValue + 0.001 > savedParametersList[HIGH_LIM]) && (savedParametersList[HIGH_LIM] > 0.0)) 
 	{		
+		PORTC |= 1<<PORTC1;
+		_delay_ms(500);
+		PORTC &= ~(1<<PORTC1);
+		_delay_ms(50);		
+	}
+	
+	else if(measuredValue < savedParametersList[LOW_LIM])
+	{
 		PORTC |= 1<<PORTC1;
 		_delay_ms(50);
 		PORTC &= ~(1<<PORTC1);
-		_delay_ms(100);		
+		_delay_ms(50);
 	}
-	
 	
 	_delay_ms(1000);
 	
