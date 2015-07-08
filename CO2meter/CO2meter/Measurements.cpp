@@ -34,7 +34,7 @@ void Preheating()
 	displayValue = 0;
 	_delay_ms(3000);
 	
-	for(uint16_t i = 0; i < 7200; i++)//прогрев полчаса
+	for(uint16_t i = 0; i < 3600; i++)//прогрев полчаса
 	{
 		displayValue = ((ADCGetVoltage() / savedParametersList[K_AMP]) / savedParametersList[EMF0]) * 100;
 		_delay_ms(500);
@@ -52,7 +52,7 @@ void Working()
 {
 	displayMode = WORKING;
 	float measuredValue = ((pow(10.0, ((ADCGetVoltage() / savedParametersList[K_AMP] - savedParametersList[EMF0]) / savedParametersList[DELTA_EMF]) * (log10(400.0) - log10(1000.0)) + log10(400.0)))/10000);
-	uint16_t vall = (uint8_t)(measuredValue * 100);
+	uint16_t vall = (uint16_t)(measuredValue * 100);
 	if (vall>250)
 	{
 		displayValue = 0;
@@ -60,7 +60,7 @@ void Working()
 	}
 	else
 	{
-		displayValue = (uint8_t)vall;
+		displayValue = (uint16_t)vall;
 	}
 	
 	
@@ -91,7 +91,7 @@ void Working()
 void Settings1()
 {
 	displayMode = SETTINGS1;
-	displayValue = (uint8_t)(savedParametersList[HIGH_LIM] * 100);
+	displayValue = (uint16_t)(savedParametersList[HIGH_LIM] * 100);
 	
 	uint8_t pressCounter = 0;
 	
@@ -124,7 +124,7 @@ void Settings1()
 			_delay_ms(100);
 		}
 		
-		displayValue = (uint8_t)(savedParametersList[HIGH_LIM] * 100);
+		displayValue = (uint16_t)(savedParametersList[HIGH_LIM] * 100);
 	}
 		
 	if (eeprom_read_float((float*)(HIGH_LIM * 4)) != savedParametersList[HIGH_LIM])
@@ -141,7 +141,7 @@ void Settings1()
 void Settings2()
 {
 	displayMode = SETTINGS2;
-	displayValue = (uint8_t)(savedParametersList[LOW_LIM] * 100);
+	displayValue = (uint16_t)(savedParametersList[LOW_LIM] * 100);
 	
 	uint8_t pressCounter = 0;
 	
@@ -156,9 +156,9 @@ void Settings2()
 		{
 			pressCounter++;
 			if(savedParametersList[LOW_LIM] < 0.99)
-			savedParametersList[LOW_LIM] += 0.01;
+				savedParametersList[LOW_LIM] += 0.01;
 			else
-			savedParametersList[LOW_LIM] = 0.00;
+				savedParametersList[LOW_LIM] = 0.00;
 		}
 		else
 		{
@@ -174,11 +174,29 @@ void Settings2()
 			_delay_ms(100);
 		}
 		
-		displayValue = (uint8_t)(savedParametersList[LOW_LIM] * 100);
+		displayValue = (uint16_t)(savedParametersList[LOW_LIM] * 100);
 	}
 	
 	if (eeprom_read_float((const float*)(LOW_LIM * 4)) != savedParametersList[LOW_LIM])
 	{
 		eeprom_write_float((float*)(LOW_LIM * 4), savedParametersList[LOW_LIM]);
 	}
+}
+
+void Debugging()
+{
+	displayMode = DEBUGGING;
+	float measuredValue = ADCGetVoltage() / savedParametersList[K_AMP];
+	uint16_t vall = (uint16_t)(measuredValue * 1000);
+	if (vall>999)
+	{
+		displayValue = 999;
+		measuredValue = 0;
+	}
+	else
+	{
+		displayValue = (uint16_t)vall;
+	}
+	
+	_delay_ms(500);	
 }

@@ -13,5 +13,6 @@ void ADCInit();
 float ADCGetVoltage();
 void Preheating();
 void Working();
+void Debugging();
 
 #endif /* MEASUREMENTS_H_ */

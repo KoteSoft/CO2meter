@@ -14,7 +14,8 @@ enum
 	WORKING		=	0,
 	PREHEATING	=	1,
 	SETTINGS1	=	2,
-	SETTINGS2	=	3	
+	SETTINGS2	=	3,
+	DEBUGGING	=	4	
 };
 
 typedef enum

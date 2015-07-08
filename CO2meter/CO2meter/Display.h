@@ -11,7 +11,7 @@
 
 void DisplayTimer0Init();
 
-extern uint8_t displayValue;
+extern uint16_t displayValue;
 extern uint8_t displayMode;
 
 #endif /* DISPLAY_H_ */

@@ -24,6 +24,14 @@ int main(void)
 	
 	sei();
 	
+	if (bit_is_set(PINC, MODE_BUTTON) && bit_is_set(PINC, SET_BUTTON))
+	{
+		while(1)
+		{
+			Debugging();
+		}
+	}
+	
 	Preheating();
 	
     while(1)
